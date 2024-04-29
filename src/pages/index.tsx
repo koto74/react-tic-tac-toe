@@ -1,9 +1,9 @@
-import { Square } from './App'
+import { Board } from './App'
 
 export default function Home() {
   return (
     <>
-      <Square />
+      <Board />
     </>
   )
 }
