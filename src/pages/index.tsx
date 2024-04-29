@@ -1,9 +1,9 @@
-import { Board } from './App'
+import { Game } from './App'
 
 export default function Home() {
   return (
     <>
-      <Board />
+      <Game />
     </>
   )
 }

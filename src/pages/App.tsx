@@ -5,36 +5,41 @@ type SquareProps = {
   onSquareClick: () => void
 }
 
-export const Board: React.FC = () => {
-  const [xIsNext, setXIsNext] = useState<boolean>(true)
-  const [squares, setSquares] = useState<Array<'X' | 'O' | null>>(Array(9).fill(null))
+const Square: React.FC<SquareProps> = ({ value, onSquareClick }): JSX.Element => {
+  return (
+    <button className="square" onClick={onSquareClick}>
+      {value}
+    </button>
+  )
+}
 
+type BoardProps = {
+  xIsNext: boolean
+  squares: Array<'X' | 'O' | null>
+  onPlay: (nextSquares: Array<'X' | 'O' | null>) => void
+}
+
+const Board: React.FC<BoardProps> = ({ xIsNext, squares, onPlay }): JSX.Element => {
   const handleClick = (i: number): void => {
-    if (squares[i]) {
+    if (calculateWinner(squares) || squares[i]) {
       return
     }
-    const newSquares = squares.slice()
-    if (xIsNext) {
-      newSquares[i] = 'X'
-    } else {
-      newSquares[i] = 'O'
-    }
-    setSquares(newSquares)
-    setXIsNext(!xIsNext)
+    const nextSquares = squares.slice()
+    nextSquares[i] = xIsNext ? 'X' : 'O'
+    onPlay(nextSquares)
   }
-  
-  const winner = caluculateWinner(squares)
-  let status
+
+  const winner = calculateWinner(squares)
+  let status: string
   if (winner) {
     status = `Winner: ${winner}`
   } else {
     status = `Next player: ${xIsNext ? 'X' : 'O'}`
   }
 
-
   return (
     <>
-      <div className='status'>{status}</div>
+      <div className="status">{status}</div>
       <div className="board-row">
         <Square value={squares[0]} onSquareClick={() => handleClick(0)} />
         <Square value={squares[1]} onSquareClick={() => handleClick(1)} />
@@ -54,15 +59,29 @@ export const Board: React.FC = () => {
   )
 }
 
-const Square: React.FC<SquareProps> = ({ value, onSquareClick }) => {
+export const Game: React.FC = (): JSX.Element => {
+  const [xIsNext, setXIsNext] = useState<boolean>(true)
+  const [squares, setSquares] = useState<Array<'X' | 'O' | null>>(Array(9).fill(null))
+  const [history, setHistory] = useState<Array<Array<'X' | 'O' | null>>>([squares])
+  const currentSquares = history[history.length - 1]
+
+  const handlePlay = (nextSquares: Array<'X' | 'O' | null>): void => {
+    setHistory([...history, nextSquares])
+    setXIsNext(!xIsNext)
+  }
+
   return (
-    <button className="square" onClick={onSquareClick}>
-      {value}
-    </button>
+    <div className="game">
+      <div className="game-board">
+        <Board xIsNext={xIsNext} squares={currentSquares} onPlay={handlePlay} />
+      </div>
+      <div className="game-info">
+        <ol>{/*TODO*/}</ol>
+      </div>
+    </div>
   )
 }
-
-const caluculateWinner = (squares: Array<'X' | 'O' | null>): 'X' | 'O' | null => {
+const calculateWinner = (squares: Array<'X' | 'O' | null>): 'X' | 'O' | null => {
   const lines = [
     [0, 1, 2],
     [3, 4, 5],
@@ -73,6 +92,7 @@ const caluculateWinner = (squares: Array<'X' | 'O' | null>): 'X' | 'O' | null =>
     [0, 4, 8],
     [2, 4, 6],
   ]
+
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i]
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
