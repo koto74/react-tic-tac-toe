@@ -5,18 +5,18 @@ type SquareProps = {
   onSquareClick: () => void
 }
 
+type BoardProps = {
+  xIsNext: boolean
+  squares: Array<'X' | 'O' | null>
+  onPlay: (nextSquares: Array<'X' | 'O' | null>) => void
+}
+
 const Square: React.FC<SquareProps> = ({ value, onSquareClick }): JSX.Element => {
   return (
     <button className="square" onClick={onSquareClick}>
       {value}
     </button>
   )
-}
-
-type BoardProps = {
-  xIsNext: boolean
-  squares: Array<'X' | 'O' | null>
-  onPlay: (nextSquares: Array<'X' | 'O' | null>) => void
 }
 
 const Board: React.FC<BoardProps> = ({ xIsNext, squares, onPlay }): JSX.Element => {
@@ -71,19 +71,19 @@ export const Game: React.FC = (): JSX.Element => {
     setHistory(nextHistory)
     setCurrentMove(nextHistory.length - 1)
   }
-  
+
   const jumpTo = (nextMove: number): void => {
     setCurrentMove(nextMove)
   }
 
   const moves = history.map((squares, move) => {
-    let description;
+    let description
     if (move > 0) {
       description = `Go to move #${move}`
     } else {
       description = 'Go to game start'
     }
-    
+
     return (
       <li key={move}>
         <button onClick={() => jumpTo(move)}>{description}</button>
