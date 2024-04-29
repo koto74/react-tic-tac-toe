@@ -5,6 +5,9 @@ export const Board = () => {
   const [squares, setSquares] = useState(Array(9).fill(null))
 
   const handleClick = (i) => {
+    if (squares[i]) {
+      return
+    }
     const newSquares = squares.slice()
     if (xIsNext) {
       newSquares[i] = 'X'
