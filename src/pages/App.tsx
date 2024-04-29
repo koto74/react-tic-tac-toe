@@ -1,10 +1,15 @@
 import React, { useState } from 'react'
 
-export const Board = () => {
-  const [xIsNext, setXIsNext] = useState(true)
-  const [squares, setSquares] = useState(Array(9).fill(null))
+type SquareProps = {
+  value: 'X' | 'O' | null
+  onSquareClick: () => void
+}
 
-  const handleClick = (i) => {
+export const Board:React.FC = () => {
+  const [xIsNext, setXIsNext] = useState<boolean>(true)
+  const [squares, setSquares] = useState<Array<'X' | 'O' | null>>(Array(9).fill(null))
+
+  const handleClick = (i: number): void => {
     if (squares[i]) {
       return
     }
@@ -40,6 +45,6 @@ export const Board = () => {
   )
 }
 
-const Square = ({ value, onSquareClick }) => {
+const Square:React.FC<SquareProps> = ({ value, onSquareClick }) => {
   return <button className="square" onClick={onSquareClick}>{value}</button>
 }
